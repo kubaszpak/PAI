@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  createdBy   String
+  imageUrl    String?
+  createdAt   DateTime    @default(now())
+  dates       EventDate[]
+}
+
+model EventDate {
+  id       String   @id @default(uuid())
+  date     DateTime
+  event    Event    @relation(fields: [eventId], references: [id])
+  eventId  String
+  votes    Vote[]
+}
+
+model Vote {
+  id            String   @id @default(uuid())
+  voterName     String
+  response      VoteResponse
+  eventDate     EventDate @relation(fields: [eventDateId], references: [id])
+  eventDateId   String
+}
+
+enum VoteResponse {
+  yes
+  maybe
+  no
+}
